@@ -2,7 +2,7 @@
 
 The BurpSuite Launcher automatically locates the Java environment on your system, runs BurpSuite using BurpLoaderKeygen.jar, and redirects BurpSuite data from `%APPDATA%` to the current directory.
 
-# Prerequisites
+## Prerequisites
 
 - **Java Runtime Environment (JRE)** registered on your system.
 - Ensure that the following files are in the current directory:
