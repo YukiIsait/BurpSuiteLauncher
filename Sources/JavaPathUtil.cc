@@ -19,7 +19,7 @@ namespace JavaPathUtil {
             }
             token = wcstok_s(nullptr, L";", &nextToken);
         }
-        Win32Exception::ThrowLastError(ERROR_FILE_NOT_FOUND);
+        Win32Exception::ThrowLastError(ERROR_FILE_NOT_FOUND, "Could not find 'javaw.exe' in PATH.");
         return {};
     }
 
@@ -30,7 +30,7 @@ namespace JavaPathUtil {
         javaHomeSize = GetEnvironmentVariableW(L"JAVA_HOME", javaHome.get(), javaHomeSize);
         Win32Exception::ThrowLastErrorIf(javaHomeSize == 0);
         std::wstring javawPath = FilePathUtil::Combine(javaHome.get(), L"bin\\javaw.exe");
-        Win32Exception::ThrowLastErrorIf(!FilePathUtil::Exists(javawPath), ERROR_FILE_NOT_FOUND);
+        Win32Exception::ThrowLastErrorIf(!FilePathUtil::Exists(javawPath), ERROR_FILE_NOT_FOUND, "Could not find 'javaw.exe' in JAVA_HOME.");
         return javawPath;
     }
 
@@ -38,7 +38,12 @@ namespace JavaPathUtil {
         try {
             return GetJavawFromPath();
         } catch (...) {
-            return GetJavawFromJavaHome();
+            try {
+                return GetJavawFromJavaHome();
+            } catch (...) {
+                Win32Exception::ThrowLastError(ERROR_FILE_NOT_FOUND, "Could not find 'javaw.exe' in PATH or JAVA_HOME.");
+                return {};
+            }
         }
     }
 }
